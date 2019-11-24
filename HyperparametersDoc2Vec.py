@@ -27,7 +27,7 @@ class HyperparametersDoc2Vec:
     
     @staticmethod
     def __generarAleatorioINT ( min, max):
-        return randint(min, max);
+        return randint(min, max)
     
     @staticmethod
     def __generarAleatorioFloat(min, max):
@@ -38,25 +38,25 @@ class HyperparametersDoc2Vec:
         lstRes = []
 
         while (len(lstRes) < intEltos):
-            epochs = HyperparametersDoc2Vec.__generarAleatorioINT(1, 500);
+            epochs = HyperparametersDoc2Vec.__generarAleatorioINT(1, 500)
             #epochs = HyperparametersDoc2Vec.__generarAleatorio(1, 2);
-            layerSize = HyperparametersDoc2Vec.__generarAleatorioINT(1, 500);
-            learningRate = HyperparametersDoc2Vec.__generarAleatorioFloat(0.1e-6, 0.1);
-            minLearningRate = HyperparametersDoc2Vec.__generarAleatorioFloat(0.1e-6, learningRate);
-            minWordFrecuency = HyperparametersDoc2Vec.__generarAleatorioINT(1, 100);
-            windowsSize = HyperparametersDoc2Vec.__generarAleatorioINT(1, 125);
+            layerSize = HyperparametersDoc2Vec.__generarAleatorioINT(1, 500)
+            learningRate = HyperparametersDoc2Vec.__generarAleatorioFloat(0.1e-6, 0.1)
+            minLearningRate = HyperparametersDoc2Vec.__generarAleatorioFloat(0.1e-6, learningRate)
+            minWordFrecuency = HyperparametersDoc2Vec.__generarAleatorioINT(1, 100)
+            windowsSize = HyperparametersDoc2Vec.__generarAleatorioINT(1, 125)
 
             elto = HyperparametersDoc2Vec(epochs, layerSize,learningRate, minLearningRate, minWordFrecuency, windowsSize)
             
 
             if (permitirRepetidos == False):
                 if ((elto.__key() in HyperparametersDoc2Vec.__hsGenerados) == False):
-                    lstRes.append(elto);
+                    lstRes.append(elto)
                     HyperparametersDoc2Vec.__hsGenerados.add(elto.__key())
             else:
-                lstRes.add(elto)
+                lstRes.append(elto)
 
-        return lstRes; 
+        return lstRes
     
     def toCSV (self):
         

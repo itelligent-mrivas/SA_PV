@@ -16,6 +16,6 @@ class SA:
         
         print ('[', datetime.now().strftime("%d/%m/%Y %H:%M:%S"),'] SA.run: generarndo primer elemento aleatorio')
     
-        lstConfiguraciones = HyperparametersDoc2Vec.generarAleatorios(1, False);
+        lstConfiguraciones = HyperparametersDoc2Vec.generarAleatorios(1, False)
         print ('[', datetime.now().strftime("%d/%m/%Y %H:%M:%S"),'] SA.run: generado primer elemento aleatorio')
         print (lstConfiguraciones[0].toString())
