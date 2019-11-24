@@ -19,3 +19,6 @@ class SA:
         lstConfiguraciones = HyperparametersDoc2Vec.generarAleatorios(1, False)
         print ('[', datetime.now().strftime("%d/%m/%Y %H:%M:%S"),'] SA.run: generado primer elemento aleatorio')
         print (lstConfiguraciones[0].toString())
+
+        #Crear una intacia de Doc2Vec y entranrala. Posteriromente coger el valor del coste
+        #de esta solución, que sera el error obtenido
