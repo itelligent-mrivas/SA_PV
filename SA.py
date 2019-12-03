@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from datetime import datetime
 from HyperparametersDoc2Vec import HyperparametersDoc2Vec
+from Doc2Vec import Doc2Vec
 
 class SA:
     def __init__(self, T0, LT, enfriamiento, strPathTrain, strPathTest, strPathSalidad):
@@ -20,5 +21,8 @@ class SA:
         print ('[', datetime.now().strftime("%d/%m/%Y %H:%M:%S"),'] SA.run: generado primer elemento aleatorio')
         print (lstConfiguraciones[0].toString())
 
-        #Crear una intacia de Doc2Vec y entranrala. Posteriromente coger el valor del coste
-        #de esta solución, que sera el error obtenido
+        #CSe crea la intancia de doc2vec desde el candidato generado y se entrene
+        S_act = Doc2Vec(lstConfiguraciones[0])
+        S_act.setPathDatosTrain(self.__strPathTrain)
+        S_act.setPathDatosCoste(self.__strPathTest)
+        S_act.train()

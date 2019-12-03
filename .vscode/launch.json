@@ -10,7 +10,7 @@
             "request": "launch",
             "program": "${file}",
             "console": "integratedTerminal",
-            "args": ["Param1", "param2", "param3"]
+            "args": ["./datasets/SST/Polaridad_binaria_train.csv", "./datasets/SST/Polaridad_binaria_test.csv", "param3"]
         }
     ]
 }
