@@ -1,7 +1,9 @@
 # -*- coding: utf-8 -*-
 import pandas as pd
-from bs4 import BeautifulSoup
 import re
+import string
+from nltk.tokenize import word_tokenize
+from gensim.models.doc2vec import Doc2Vec, TaggedDocument
 
 
 class Doc2Vec:
@@ -16,16 +18,20 @@ class Doc2Vec:
     
     #TODO esta función no esta limpiaando bien
     def __cleanText(self, text):
-        text = BeautifulSoup(text, "lxml").text
-        text = re.sub(r'\|\|\|', r' ', text) 
-        text = re.sub(r'http\S+', r'<URL>', text)
         text = text.lower()
-        text = text.replace('x', '')
+        text = re.sub(r'\d+', '', text)
+        
+        translator = str.maketrans('', '', string.punctuation)
+        text = text.translate(translator)
+
         return text
 
     def train(self):
         print("Entrenando con los datos de " + self.__strPathDatosTrain)
         recursos = pd.read_csv(self.__strPathDatosTrain, sep=';')
-        print(recursos.iloc[0][1])
-        print("------------------------")
-        print(self.__cleanText(recursos.iloc[0][1]))
+        
+        train_tagged = recursos.apply(lambda r: TaggedDocument(words=word_tokenize(self.__cleanText(r['sentence'])), tags=r.Polarida), axis=1)
+
+        print (train_tagged.values[30])
+        #TODO  y entrenar el doc2vec
+        
