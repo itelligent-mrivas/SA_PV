@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from datetime import datetime
 from HyperparametersDoc2Vec import HyperparametersDoc2Vec
-from Doc2Vec import Doc2Vec
+from Doc2VecBuilder import Doc2VecBuilder
 
 class SA:
     def __init__(self, T0, LT, enfriamiento, strPathTrain, strPathTest, strPathSalidad):
@@ -22,7 +22,7 @@ class SA:
         print (lstConfiguraciones[0].toString())
 
         #CSe crea la intancia de doc2vec desde el candidato generado y se entrene
-        S_act = Doc2Vec(lstConfiguraciones[0])
+        S_act = Doc2VecBuilder(lstConfiguraciones[0])
         S_act.setPathDatosTrain(self.__strPathTrain)
         S_act.setPathDatosCoste(self.__strPathTest)
         S_act.train()
