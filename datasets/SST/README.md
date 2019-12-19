@@ -28,4 +28,4 @@ Los datos se parten en tres conjunto:
 Los campos que tienen los ficheros son:
 1. **sentence_index.** Identificador del elemento
 2. **sentence.** Texto del comentario
-3. **Polarida.** Polaridad del cometario, que peude tener los valores {"Negativo", "Positivo"}
+3. **Polarida.** Polaridad del cometario, que peude tener los valores {0(Negativo), 1(Positivo)}

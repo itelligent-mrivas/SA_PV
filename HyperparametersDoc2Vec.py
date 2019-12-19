@@ -38,8 +38,8 @@ class HyperparametersDoc2Vec:
         lstRes = []
 
         while (len(lstRes) < intEltos):
-            epochs = HyperparametersDoc2Vec.__generarAleatorioINT(1, 500)
-            #epochs = HyperparametersDoc2Vec.__generarAleatorio(1, 2);
+            #epochs = HyperparametersDoc2Vec.__generarAleatorioINT(1, 500)
+            epochs = HyperparametersDoc2Vec.__generarAleatorioINT(1, 2)
             layerSize = HyperparametersDoc2Vec.__generarAleatorioINT(1, 500)
             learningRate = HyperparametersDoc2Vec.__generarAleatorioFloat(0.1e-6, 0.1)
             minLearningRate = HyperparametersDoc2Vec.__generarAleatorioFloat(0.1e-6, learningRate)

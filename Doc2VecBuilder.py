@@ -5,6 +5,7 @@ import string
 import multiprocessing
 from nltk.tokenize import word_tokenize
 from gensim.models.doc2vec import Doc2Vec, TaggedDocument
+from sklearn.linear_model import LogisticRegression
 
 
 class Doc2VecBuilder:
@@ -31,6 +32,7 @@ class Doc2VecBuilder:
         #Carga de los datos
         recursos = pd.read_csv(self.__strPathDatosTrain, sep=';')
         
+        
         #Monto el tagged Documento con el que trabaja doc2ve. Pasandole los textos limpios y tokenizados
         # y como clase tags el valor de 
         train_tagged = recursos.apply(lambda r: TaggedDocument(words=word_tokenize(self.__cleanText(r['sentence'])), tags=r["polaridad"]), axis=1)
@@ -39,8 +41,28 @@ class Doc2VecBuilder:
         cores = multiprocessing.cpu_count()
         print("Numero de procesadores detectados para el entrenamiento ", cores)
         
-        model = Doc2Vec(vector_size= self.__hyperparametros.layerSize, window=self.__hyperparametros.widowsSize, min_count=self.__hyperparametros.minWordFrecueny, workers=cores, alpha=self.__hyperparametros.learningRate, min_alpha=self.__hyperparametros.minLearningRate, epochs= self.__hyperparametros.epochs)
-        model.build_vocab(train_tagged)
-        model.train(train_tagged, epochs=model.epochs, total_examples=model.corpus_count)
+        self.__modelDoc2vev = Doc2Vec(vector_size= self.__hyperparametros.layerSize, window=self.__hyperparametros.widowsSize, min_count=self.__hyperparametros.minWordFrecueny, workers=cores, alpha=self.__hyperparametros.learningRate, min_alpha=self.__hyperparametros.minLearningRate, epochs= self.__hyperparametros.epochs)
+        self.__modelDoc2vev.build_vocab([x for x in train_tagged.values])
+        self.__modelDoc2vev.train(train_tagged, epochs=self.__modelDoc2vev.epochs, total_examples=self.__modelDoc2vev.corpus_count)
         
-        #TODO entrenar el clasificador
+        #Una vez entrenado el Doc2Vec se entrena el clasificados. Para ello primero monto xTrain con 
+        #los vectores de los documentos train, y yTrain con las clases de train
+        yTrain = recursos["polaridad"]
+        xTrain = []
+        for i in range(len(self.__modelDoc2vev.docvecs)):
+            xTrain.append(self.__modelDoc2vev.docvecs[i].tolist())
+        
+        #Entrenamiento del clasificador
+        self.__clasificador = LogisticRegression(n_jobs=cores)
+        self.__clasificador.fit(xTrain, yTrain)
+
+    # def coste():
+    #     #Entrenar el clasificador con los vectores de train y validarlo con los de test
+        
+    #     xTrain = []
+    #     for i in len(self.__model.docvecs):
+    #         xTrain.append(model.docvecs[i].tolist())
+
+    #     cores = multiprocessing.cpu_count()
+    #     clasificador = LogisticRegression(n_jobs=cores)
+    #     clasificador.fit(xTrain)
