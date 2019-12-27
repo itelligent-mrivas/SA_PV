@@ -27,6 +27,11 @@ class Doc2VecBuilder:
 
         return text
 
+    def __vector_for_learning(self, input_docs):
+        sents = input_docs
+        targets, feature_vectors = zip(*[(doc.tags[0], self.__modelDoc2vev.infer_vector(doc.words, steps=20)) for doc in sents])
+        return targets, feature_vectors      
+
     def train(self):
         print("Entrenando con los datos de " + self.__strPathDatosTrain)
         #Carga de los datos
@@ -47,14 +52,12 @@ class Doc2VecBuilder:
         
         #Una vez entrenado el Doc2Vec se entrena el clasificados. Para ello primero monto xTrain con 
         #los vectores de los documentos train, y yTrain con las clases de train
-        yTrain = recursos["polaridad"]
-        xTrain = []
-        for i in range(len(self.__modelDoc2vev.docvecs)):
-            xTrain.append(self.__modelDoc2vev.docvecs[i].tolist())
-        
+        yTrain, xTrain = self.__vector_for_learning(train_tagged)
+                
         #Entrenamiento del clasificador
         self.__clasificador = LogisticRegression(n_jobs=cores)
         self.__clasificador.fit(xTrain, yTrain)
+        print("ENTRENADO!!!!!!")
 
     # def coste():
     #     #Entrenar el clasificador con los vectores de train y validarlo con los de test
