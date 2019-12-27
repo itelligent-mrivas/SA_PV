@@ -6,6 +6,7 @@ import multiprocessing
 from nltk.tokenize import word_tokenize
 from gensim.models.doc2vec import Doc2Vec, TaggedDocument
 from sklearn.linear_model import LogisticRegression
+from sklearn.metrics import f1_score
 
 
 class Doc2VecBuilder:
@@ -53,19 +54,19 @@ class Doc2VecBuilder:
         #Una vez entrenado el Doc2Vec se entrena el clasificados. Para ello primero monto xTrain con 
         #los vectores de los documentos train, y yTrain con las clases de train
         yTrain, xTrain = self.__vector_for_learning(train_tagged)
-                
+
         #Entrenamiento del clasificador
         self.__clasificador = LogisticRegression(n_jobs=cores)
         self.__clasificador.fit(xTrain, yTrain)
-        print("ENTRENADO!!!!!!")
 
-    # def coste():
-    #     #Entrenar el clasificador con los vectores de train y validarlo con los de test
+    def coste(self):
+        #Carga de los datos
+        recursos = pd.read_csv(self.__strPathDatosCoste, sep=';')
         
-    #     xTrain = []
-    #     for i in len(self.__model.docvecs):
-    #         xTrain.append(model.docvecs[i].tolist())
-
-    #     cores = multiprocessing.cpu_count()
-    #     clasificador = LogisticRegression(n_jobs=cores)
-    #     clasificador.fit(xTrain)
+        
+        #Monto el tagged Documento con el que trabaja doc2ve. Pasandole los textos limpios y tokenizados
+        # y como clase tags el valor de 
+        test_tagged = recursos.apply(lambda r: TaggedDocument(words=word_tokenize(self.__cleanText(r['sentence'])), tags=r["polaridad"]), axis=1)
+        yTest, xTest = self.__vector_for_learning(test_tagged)
+        yPred = self.__clasificador.predict(xTest)
+        return f1_score(yTest, yPred, average='weighted')

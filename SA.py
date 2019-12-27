@@ -26,3 +26,7 @@ class SA:
         S_act.setPathDatosTrain(self.__strPathTrain)
         S_act.setPathDatosCoste(self.__strPathTest)
         S_act.train()
+
+        #obtengo el coste de la solucion
+        coste =S_act.coste()
+        print("Coste obtenido ", coste)
