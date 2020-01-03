@@ -2,6 +2,8 @@
 from datetime import datetime
 from HyperparametersDoc2Vec import HyperparametersDoc2Vec
 from Doc2VecBuilder import Doc2VecBuilder
+from random import random
+import math
 
 class SA:
     def __init__(self, T0, LT, enfriamiento, strPathTrain, strPathTest, strPathSalidad, modificador):
@@ -43,6 +45,8 @@ class SA:
 
         blnConitnuar = True
         while(blnConitnuar):
+            print ('[', datetime.now().strftime("%d/%m/%Y %H:%M:%S"),'] Temperatura ', T)
+
             configuracion = None
             if self.__modificador == "aleatorio":
                 configuracion = HyperparametersDoc2Vec.generarAleatorios(self.__LT, False)
@@ -50,3 +54,41 @@ class SA:
                 configuracion = HyperparametersDoc2Vec.generarUniforme(S_act.getParametros(), self.__LT, False)
             elif self.__modificador == "no_uniforme":
                 configuracion = HyperparametersDoc2Vec.generarNoUniforme(S_act.getParametros(), T, self.__LT, False)
+
+            S_Cand = Doc2VecBuilder(configuracion)
+            S_Cand.setPathDatosTrain(self.__strPathTrain)
+            S_Cand.setPathDatosCoste(self.__strPathTest)
+            
+            S_Cand.train()
+            dblCoste_Cand = S_Cand.coste()
+
+            print ('[', datetime.now().strftime("%d/%m/%Y %H:%M:%S"),'] Modelo ', S_Cand.getParametros().toCSV(), " Coste ", dblCoste_Cand)
+
+            difCoste = dblCoste_Cand - dblCoste_act
+            porcentajeMejora = 0
+
+            #Si el candidato es mejor que el actual nos quedamso con el
+            if (difCoste < 0) :
+                porcentajeMejora = abs(difCoste)/dblCoste_act
+
+                S_act = S_Cand
+                dblCoste_act = dblCoste_Cand
+
+                # Miro si mejora la mejor solucion hasta el momento
+                if (dblCoste_act < dblCosteMejor) :
+                    dblCosteMejor = dblCoste_act
+                    mejorSolucion = S_act
+
+                    print ('[', datetime.now().strftime("%d/%m/%Y %H:%M:%S"),'] \tCandaidto anceptado, coste: ', dblCoste_Cand)
+
+                    intAceptadas = intAceptadas + 1
+            else :
+                #Si no es mejor calculamso la probabilidad de aceptación
+                dblPropabilidadAceptacion = math.pow(math.e, - difCoste / T)
+                if (random() < dblPropabilidadAceptacion) :
+                    S_act = S_Cand
+                    dblCoste_act = dblCoste_Cand
+
+                    print ('[', datetime.now().strftime("%d/%m/%Y %H:%M:%S"),'] \tCandaidto anceptado por porb, coste: ', dblCoste_act)
+            
+            #Añado a la cola el porcentaje de mejora

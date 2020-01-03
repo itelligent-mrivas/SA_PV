@@ -125,9 +125,9 @@ class HyperparametersDoc2Vec:
         elif intCampoMutar == 1:
             mutado.layerSize = self.__generaNoUniformeINT(mutado.layerSize, 1, 500, T)
         elif intCampoMutar == 2:
-            mutado.learningRate = self.__generaNoUniforme(mutado.learningRate, 0.1e-6, 0.1, T)
+            mutado.learningRate = self.__generaNoUniformeFLOAT(mutado.learningRate, 0.1e-6, 0.1, T)
         elif intCampoMutar == 3:
-            mutado.minLearningRate = self.__generaNoUniforme(mutado.minLearningRate, 0.1e-6, mutado.learningRate, T)
+            mutado.minLearningRate = self.__generaNoUniformeFLOAT(mutado.minLearningRate, 0.1e-6, mutado.learningRate, T)
         elif intCampoMutar == 4:
             mutado.minWordFrecueny = self.__generaNoUniformeINT(mutado.minWordFrecueny, 1, 100, T)
         elif intCampoMutar == 5:
@@ -187,14 +187,68 @@ class HyperparametersDoc2Vec:
 
         return intRes
 
-    def incrementoINT (t, y) :
-        exponente = math.pow(math.pow(math.E, -1 / t), 5)
-        aleatorio = hyperparametersDoc2Vec.generarAleatorio(0.0, 1.0);
-        res = (int) (y * (1 - Math.pow(aleatorio, exponente)));
+    def __incrementoINT (self, t, y) :
+        exponente = math.pow(math.pow(math.e, -1 / t), 5)
+        aleatorio = HyperparametersDoc2Vec.__generarAleatorioFloat(0.0, 1.0)
+        res = (int) (y * (1 - math.pow(aleatorio, exponente)))
 
-        return res;
-    }
+        return res
 
+    def __generaNoUniformeFLOAT (self, intElto,  LI,  LS,  T):
+        intRuleta = None
+        dblRes = None
+
+        if (intElto == LS) : # Si ya estamso en el Limite supersiso forzamos que reste
+            intRuleta = 10000
+        elif (intElto == LI) : # Si ya estamos en el limite inferior, forzamso que sume
+            intRuleta = 0
+        else :
+            intRuleta = HyperparametersDoc2Vec.__generarAleatorioINT(0, 10000)
+
+        if (intRuleta < 5000):
+            dblIncremento = 0
+            intVuelta = 0
+            
+            while True :
+                dblIncremento = self.__incrementoFLOAT(T, LS - intElto)
+
+                if (intVuelta > 10) :
+                    print("3 DEMASIADAS VUELTAS!!!!")
+                
+                intVuelta = intVuelta + 1
+                if dblIncremento != 0:
+                    break
+
+            dblRes = intElto + dblIncremento
+
+            if (dblRes > LS) :
+                dblRes = LS
+
+        else :
+            dblIncremento = 0
+            intVuelta = 0
+            while True:
+                dblIncremento = self.__incrementoFLOAT(T, intElto - LI)
+
+                if (intVuelta > 10) :
+                    print("4 DEMASIADAS VUELTAS!!!!")
+                
+                intVuelta = intVuelta +1
+                if (dblIncremento != 0):
+                    break
+
+            dblRes = intElto - dblIncremento
+            if (dblRes < LI) :
+                dblRes = LI
+
+        return dblRes
+    
+    def __incrementoFLOAT (self, t, y) :
+        exponente = math.pow(math.pow(math.e, -1 / t), 5)
+        aleatorio = HyperparametersDoc2Vec.__generarAleatorioFloat(0.0, 1.0)
+        res = y * (1 - math.pow(aleatorio, exponente))
+
+        return res
 
     def toCSV (self):
         
