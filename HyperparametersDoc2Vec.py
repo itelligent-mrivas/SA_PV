@@ -2,6 +2,7 @@
 from random import seed
 from random import randint
 from random import random
+import math
 
 class HyperparametersDoc2Vec:
     __hsGenerados = set()
@@ -34,7 +35,7 @@ class HyperparametersDoc2Vec:
         return min + (random() * (max - min))
     
     @staticmethod
-    def generarAleatorios (intEltos,permitirRepetidos):
+    def generarAleatorios (intEltos,permitirRepetidos=False):
         lstRes = []
 
         while (len(lstRes) < intEltos):
@@ -57,7 +58,144 @@ class HyperparametersDoc2Vec:
                 lstRes.append(elto)
 
         return lstRes
+    @staticmethod
+    def generarUniforme(input, intEltos, permitirRepetidos=False):
+        lstRes = []
+
+        while (len(lstRes) < intEltos) :
+            elto = input.__mutacionUniforme()
+            if (permitirRepetidos == False):
+                #Si no se ha pasado ya por este elemento se tiene en cuenta, sino se decarta
+                if ((elto.key() in HyperparametersDoc2Vec.__hsGenerados) == False):
+                    lstRes.append(elto)
+                    HyperparametersDoc2Vec.__hsGenerados.add(elto.__key())
+            else :
+                lstRes.append(elto)
+
+        return lstRes
     
+    def __mutacionUniforme(self):
+        
+
+        intCampoMutar = HyperparametersDoc2Vec.__generarAleatorioINT(0, 5)
+        
+        mutado = HyperparametersDoc2Vec(self.epochs, self.layerSize, self.learningRate, self.minLearningRate, self.minWordFrecueny, self.widowsSize)
+
+        if intCampoMutar == 0:
+            mutado.epochs = HyperparametersDoc2Vec.__generarAleatorioINT(1, 500)
+            #mutado.epochs = hyperparametersDoc2Vec.generarAleatorio(1, 2);
+        elif intCampoMutar == 1:
+            mutado.layerSize = HyperparametersDoc2Vec.__generarAleatorioINT(1, 500)
+        elif intCampoMutar == 2:
+            mutado.learningRate = HyperparametersDoc2Vec.__generarAleatorioFloat(0.1e-6, 0.1)
+        elif intCampoMutar == 3:
+            mutado.minLearningRate = HyperparametersDoc2Vec.__generarAleatorioFloat(0.1e-6, mutado.learningRate)
+        elif intCampoMutar == 4:
+            mutado.minWordFrecueny = HyperparametersDoc2Vec.__generarAleatorioINT(1, 100)
+        elif intCampoMutar == 5:
+            mutado.widowsSize = HyperparametersDoc2Vec.__generarAleatorioINT(1, 125)
+        
+        return mutado
+
+    @staticmethod
+    def generarNoUniforme (input, T, intEltos, permitirRepetidos=False):
+        lstRes = []
+
+        while (len(lstRes) < intEltos):
+            elto = input.__mutacionNoUniforme(T)
+            
+            if (permitirRepetidos == False):
+                #Si no se ha pasado ya por este elemento se tiene en cuenta, sino se decarta
+                if ((elto.key() in HyperparametersDoc2Vec.__hsGenerados) == False):
+                    lstRes.append(elto)
+                    HyperparametersDoc2Vec.__hsGenerados.add(elto.__key())
+            else :
+                lstRes.append(elto)
+
+        return lstRes
+    
+    def __mutacionNoUniforme (self, T) :
+        intCampoMutar = HyperparametersDoc2Vec.__generarAleatorioINT(0,5)
+
+        mutado = HyperparametersDoc2Vec(self.epochs, self.layerSize, self.learningRate, self.minLearningRate, self.minWordFrecueny, self.widowsSize)
+
+        if intCampoMutar == 0:
+            mutado.epochs = self.__generaNoUniformeINT(self.epochs, 1, 500, T)
+            #mutado.epochs = self.__generaNoUniformeINT(mutado.epochs, 1, 2, T)
+        elif intCampoMutar == 1:
+            mutado.layerSize = self.__generaNoUniformeINT(mutado.layerSize, 1, 500, T)
+        elif intCampoMutar == 2:
+            mutado.learningRate = self.__generaNoUniforme(mutado.learningRate, 0.1e-6, 0.1, T)
+        elif intCampoMutar == 3:
+            mutado.minLearningRate = self.__generaNoUniforme(mutado.minLearningRate, 0.1e-6, mutado.learningRate, T)
+        elif intCampoMutar == 4:
+            mutado.minWordFrecueny = self.__generaNoUniformeINT(mutado.minWordFrecueny, 1, 100, T)
+        elif intCampoMutar == 5:
+            mutado.widowsSize = self.__generaNoUniformeINT(mutado.widowsSize, 1, 125, T)
+
+        return mutado
+    
+    def __generaNoUniformeINT(self, intElto, LI, LS, T):
+        intRes=None
+
+        intRuleta = None
+        if (intElto == LS): # Si ya estamso en el Limite supersiso forzamso que reste
+            intRuleta = 10000
+        elif (intElto == LI): # Si ya estamos en el limite inferior, forzamso que sume
+            intRuleta = 0
+        else :
+            intRuleta = HyperparametersDoc2Vec.__generarAleatorioINT(0, 10000)
+
+        if (intRuleta < 5000) :
+            intIncremento = 0
+            intVuelta = 0
+            while True :
+                intIncremento = self.__incrementoINT(T, LS - intElto)
+
+                if (intIncremento == 0 and (LS - intElto) == 1):
+                    intIncremento = 1
+                
+                if (intVuelta > 10):
+                    print("1 DEMASIADAS VUELTAS!!!!")
+                intVuelta = intVuelta+1
+                if intIncremento != 0:
+                    break
+
+            intRes = intElto + intIncremento
+
+            if (intRes > LS):
+                intRes = LS
+
+        else:
+            intIncremento = 0
+            intVuelta = 0
+            while True:
+                intIncremento = self.__incrementoINT(T, intElto - LI)
+
+                if (intIncremento == 0 and (intElto - LI) == 1):
+                    intIncremento = 1
+                if (intVuelta > 10):
+                    print("2 DEMASIADAS VUELTAS!!!!")
+                
+                intVuelta = intVuelta+1
+                if(intIncremento != 0):
+                    break
+
+            intRes = intElto - intIncremento
+            if (intRes < LI):
+                intRes = LI
+
+        return intRes
+
+    def incrementoINT (t, y) :
+        exponente = math.pow(math.pow(math.E, -1 / t), 5)
+        aleatorio = hyperparametersDoc2Vec.generarAleatorio(0.0, 1.0);
+        res = (int) (y * (1 - Math.pow(aleatorio, exponente)));
+
+        return res;
+    }
+
+
     def toCSV (self):
         
         return str(self.epochs) + ";" + str(self.layerSize) + ";" + str(self.learningRate) + ";" + str(self.minLearningRate) + ";" + str(self.minWordFrecueny) + ";" + str(self.widowsSize)

@@ -70,3 +70,6 @@ class Doc2VecBuilder:
         yTest, xTest = self.__vector_for_learning(test_tagged)
         yPred = self.__clasificador.predict(xTest)
         return f1_score(yTest, yPred, average='weighted')
+    
+    def getParametros(self):
+        return self.__hyperparametros
