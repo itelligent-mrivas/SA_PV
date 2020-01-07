@@ -69,7 +69,9 @@ class Doc2VecBuilder:
         test_tagged = recursos.apply(lambda r: TaggedDocument(words=word_tokenize(self.__cleanText(r['sentence'])), tags=r["polaridad"]), axis=1)
         yTest, xTest = self.__vector_for_learning(test_tagged)
         yPred = self.__clasificador.predict(xTest)
-        return f1_score(yTest, yPred, average='weighted')
+
+        #Devuelvo 1 -f1_socre para convertirlo en una función de coste
+        return 1 - f1_score(yTest, yPred, average='weighted')
     
     def getParametros(self):
         return self.__hyperparametros
