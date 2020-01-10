@@ -91,5 +91,8 @@ class SA:
 
                     print ('[', datetime.now().strftime("%d/%m/%Y %H:%M:%S"),'] \tCandaidto anceptado por porb, coste: ', dblCoste_act)
             
-            #Añado a la cola el porcentaje de mejora
+            #Añado a la cola el porcentaje de mejora.
+            #Si la cola esta llena hago hueco
+            if(colaCostes.full()):
+                colaCostes.get()
             colaCostes.put(porcentajeMejora)
