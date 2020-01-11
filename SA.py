@@ -4,7 +4,6 @@ from HyperparametersDoc2Vec import HyperparametersDoc2Vec
 from Doc2VecBuilder import Doc2VecBuilder
 from random import random
 import math
-from queue import Queue
 
 class SA:
     def __init__(self, T0, LT, enfriamiento, strPathTrain, strPathTest, strPathSalidad, modificador):
@@ -20,6 +19,8 @@ class SA:
             self.__modificador = modificador
         else:
             raise Exception("Modifcado " + modificador + " invalido. Debe ser: aleatorio, uniforme o no_uniforme")
+
+        self.__colaCostes = []
     
     def run(self):
         T = self.__T0
@@ -45,7 +46,6 @@ class SA:
         mejorSolucion = S_act
 
         blnConitnuar = True
-        colaCostes = Queue(4)
         while(blnConitnuar):
             print ('[', datetime.now().strftime("%d/%m/%Y %H:%M:%S"),'] Temperatura ', T)
 
@@ -90,9 +90,35 @@ class SA:
                     dblCoste_act = dblCoste_Cand
 
                     print ('[', datetime.now().strftime("%d/%m/%Y %H:%M:%S"),'] \tCandaidto anceptado por porb, coste: ', dblCoste_act)
-            
-            #Añado a la cola el porcentaje de mejora.
-            #Si la cola esta llena hago hueco
-            if(colaCostes.full()):
-                colaCostes.get()
-            colaCostes.put(porcentajeMejora)
+
+            # Actualizo la temperatura
+            T = self.__enfriamiento * T
+
+            #Compruebo criterio de parada
+            blnConitnuar = self.paradaKirkpatric(porcentajeMejora)
+        
+        #FIND DE LA OPTIMIZACIÓN, GUARDAR RESULTADOS FINALES
+        print('\n\n--------------------------------------------------------------------\n')
+        print('********* Fin de la optimización ********************************')
+        print('Mejor solución: ' + mejorSolucion.getParametros().toCSV())
+        print('Coste de la mejor soluciín ', dblCosteMejor)
+
+    def paradaKirkpatric(self, coste):
+        if len(self.__colaCostes) < 4 :
+            self.__colaCostes.append(coste)
+            return True
+        
+        self.__colaCostes.pop(0)
+        self.__colaCostes.append(coste)
+
+        blnContinuar = False
+        i = 0
+        while(i < len(self.__colaCostes) and blnContinuar == False):
+            valor = self.__colaCostes[i]
+            if(valor >0.02):
+                blnContinuar=True
+            i = i+1
+        return blnContinuar
+        
+
+

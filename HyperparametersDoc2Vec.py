@@ -39,8 +39,8 @@ class HyperparametersDoc2Vec:
         lstRes = []
 
         while (len(lstRes) < intEltos):
-            #epochs = HyperparametersDoc2Vec.__generarAleatorioINT(1, 500)
-            epochs = HyperparametersDoc2Vec.__generarAleatorioINT(1, 2)
+            epochs = HyperparametersDoc2Vec.__generarAleatorioINT(1, 500)
+            #epochs = HyperparametersDoc2Vec.__generarAleatorioINT(1, 2)
             layerSize = HyperparametersDoc2Vec.__generarAleatorioINT(1, 500)
             learningRate = HyperparametersDoc2Vec.__generarAleatorioFloat(0.1e-6, 0.1)
             minLearningRate = HyperparametersDoc2Vec.__generarAleatorioFloat(0.1e-6, learningRate)
@@ -66,7 +66,7 @@ class HyperparametersDoc2Vec:
             elto = input.__mutacionUniforme()
             if (permitirRepetidos == False):
                 #Si no se ha pasado ya por este elemento se tiene en cuenta, sino se decarta
-                if ((elto.key() in HyperparametersDoc2Vec.__hsGenerados) == False):
+                if ((elto.__key() in HyperparametersDoc2Vec.__hsGenerados) == False):
                     lstRes.append(elto)
                     HyperparametersDoc2Vec.__hsGenerados.add(elto.__key())
             else :
@@ -106,7 +106,7 @@ class HyperparametersDoc2Vec:
             
             if (permitirRepetidos == False):
                 #Si no se ha pasado ya por este elemento se tiene en cuenta, sino se decarta
-                if ((elto.key() in HyperparametersDoc2Vec.__hsGenerados) == False):
+                if ((elto.__key() in HyperparametersDoc2Vec.__hsGenerados) == False):
                     lstRes.append(elto)
                     HyperparametersDoc2Vec.__hsGenerados.add(elto.__key())
             else :

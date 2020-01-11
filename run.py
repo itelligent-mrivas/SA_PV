@@ -16,5 +16,5 @@ print("Path train: " + strPathTrain)
 print("Path test: " + strPathTest)
 print("Salida: " + strPathSalida)
 
-experimento =SA(3, 1, 0.9, strPathTrain, strPathTest, strPathSalida, "aleatorio")
+experimento =SA(3, 1, 0.9, strPathTrain, strPathTest, strPathSalida, "no_uniforme")
 experimento.run()
