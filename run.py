@@ -12,7 +12,7 @@ strPathTest = str(sys.argv[2])
 strPathSalida = str(sys.argv[3])
 
 
-print("Path train: " + strPathTrain)
+print("Path train Elisa: " + strPathTrain)
 print("Path test: " + strPathTest)
 print("Salida: " + strPathSalida)
 
