@@ -2,9 +2,9 @@
 import sys
 from SA import SA
 
-if (len(sys.argv) != 3):
+if (len(sys.argv) != 4):
     print ('Se requieren tres parameros, se recibe, ', len(sys.argv), ';', str(sys.argv))
-    #sys.exit(1)
+    sys.exit(1)
 
 
 strPathTrain = str(sys.argv[1])

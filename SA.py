@@ -4,6 +4,7 @@ from HyperparametersDoc2Vec import HyperparametersDoc2Vec
 from Doc2VecBuilder import Doc2VecBuilder
 from random import random
 import math
+import os
 
 class SA:
     def __init__(self, T0, LT, enfriamiento, strPathTrain, strPathTest, strPathSalidad, modificador):
@@ -22,9 +23,23 @@ class SA:
 
         self.__colaCostes = []
     
+    def __inicializa_fichero(self):
+        strPath = self.__strPathSalida + datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        os.mkdir(strPath)
+        
+        self.__file = open(strPath+ '/resultados.csv', 'w')
+        self.__file.write("id solucion;epochs;layerSize;learningRate;minLearningRate;minWordFrecueny;widowsSize;coste\n")
+        self.__file.flush()
+    
+    def __escribe_solucion(self, id, hyperparametros, coste):
+        self.__file.write(id + ";"+ hyperparametros.toCSV()+";"+str(coste)+ "\n")
+        self.__file.flush()
+    
     def run(self):
         T = self.__T0
         
+        self.__inicializa_fichero()
+
         print ('[', datetime.now().strftime("%d/%m/%Y %H:%M:%S"),'] SA.run: generarndo primer elemento aleatorio')
     
         lstConfiguraciones = HyperparametersDoc2Vec.generarAleatorios(1, False)
@@ -44,6 +59,8 @@ class SA:
         dblCoste_act =S_act.coste()
         dblCosteMejor = dblCoste_act
         mejorSolucion = S_act
+
+        self.__escribe_solucion("--", lstConfiguraciones[0], dblCoste_act)
 
         blnConitnuar = True
         while(blnConitnuar):
@@ -65,6 +82,8 @@ class SA:
             dblCoste_Cand = S_Cand.coste()
 
             print ('[', datetime.now().strftime("%d/%m/%Y %H:%M:%S"),'] Modelo ', S_Cand.getParametros().toCSV(), " Coste ", dblCoste_Cand)
+
+            self.__escribe_solucion('-', S_Cand.getParametros(), dblCoste_Cand)
 
             difCoste = dblCoste_Cand - dblCoste_act
             porcentajeMejora = 0
