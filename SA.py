@@ -22,18 +22,29 @@ class SA:
             raise Exception("Modifcado " + modificador + " invalido. Debe ser: aleatorio, uniforme o no_uniforme")
 
         self.__colaCostes = []
+        self.__id_solucion = 0
     
     def __inicializa_fichero(self):
+        #Creo la carpeta global
         strPath = self.__strPathSalida + datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         os.mkdir(strPath)
         
+        #Creo la carpeta para modelos y guardo su path para luego poder guardar los modelos
+        self.__pathModelos = strPath + "/modelos/"
+        os.mkdir(self.__pathModelos)
+
+        #inicializo el fichero de resultados
         self.__file = open(strPath+ '/resultados.csv', 'w')
         self.__file.write("id solucion;epochs;layerSize;learningRate;minLearningRate;minWordFrecueny;widowsSize;coste\n")
         self.__file.flush()
     
     def __escribe_solucion(self, id, hyperparametros, coste):
-        self.__file.write(id + ";"+ hyperparametros.toCSV()+";"+str(coste)+ "\n")
+        self.__file.write(str(id) + ";"+ hyperparametros.toCSV()+";"+str(coste)+ "\n")
         self.__file.flush()
+    
+    def __generarId(self):
+        self.__id_solucion = self.__id_solucion +1
+        return self.__id_solucion
     
     def run(self):
         T = self.__T0
@@ -60,7 +71,10 @@ class SA:
         dblCosteMejor = dblCoste_act
         mejorSolucion = S_act
 
-        self.__escribe_solucion("--", lstConfiguraciones[0], dblCoste_act)
+        # guardo el modelo y la slucion
+        id_solucion = self.__generarId()
+        self.__escribe_solucion(id_solucion, lstConfiguraciones[0], dblCoste_act)
+        S_act.guardarModelo(self.__pathModelos, id_solucion)
 
         blnConitnuar = True
         while(blnConitnuar):
@@ -83,7 +97,10 @@ class SA:
 
             print ('[', datetime.now().strftime("%d/%m/%Y %H:%M:%S"),'] Modelo ', S_Cand.getParametros().toCSV(), " Coste ", dblCoste_Cand)
 
-            self.__escribe_solucion('-', S_Cand.getParametros(), dblCoste_Cand)
+            #guardo solución y modelos
+            id_solucion = self.__generarId()
+            self.__escribe_solucion(id_solucion, S_Cand.getParametros(), dblCoste_Cand)
+            S_Cand.guardarModelo(self.__pathModelos, id_solucion)
 
             difCoste = dblCoste_Cand - dblCoste_act
             porcentajeMejora = 0
