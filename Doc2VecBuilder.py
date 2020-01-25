@@ -75,3 +75,7 @@ class Doc2VecBuilder:
     
     def getParametros(self):
         return self.__hyperparametros
+
+    def guardarModelo(self, path, id):
+        path = path + str(id) +'__modelDoc2vec'
+        self.__modelDoc2vev.save(path)
